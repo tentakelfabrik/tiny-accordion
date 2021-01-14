@@ -1,0 +1,101 @@
+<tiny-accordion>
+    <div class="tiny-accordion">
+        <div class="tiny-accordion__header">
+            <ul>
+                <li class={ getCurrentClass(index) } each={ (item, index) in state.items } onclick={ () => handleClick(event, index) }>
+                    { item }
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+
+        /**
+         *
+         *
+         *
+         */
+
+        export default {
+
+            state: {
+                items: [],
+                index: 0
+            },
+
+            /**
+             *  getting innerHTML and remove it
+             *
+             */
+            onBeforeMount()
+            {
+                this.content = this.root.innerHTML
+                this.root.innerHTML = ''
+            },
+
+            /**
+             *  create wrapper for
+             *
+             *  @param  {object} props
+             *  @param  {object} state
+             *
+             */
+            onMounted(props, state) {
+                const header = this.$('.tiny-accordion__header')
+
+                state.wrapper = document.createElement('div')
+
+                state.wrapper.innerHTML = this.content
+                header.after(state.wrapper)
+
+                // run through all items and add a css-class and current class to first element
+                for (let i = 0; i < state.wrapper.children.length; i++) {
+                    state.items.push(state.wrapper.children[i].title)
+                    state.wrapper.children[i].classList.add('tiny-accordion__item')
+
+                    if (i === 0) {
+                        state.wrapper.children[i].classList.add('tiny-accordion__item--active')
+                    }
+                }
+
+                this.update()
+            },
+
+            /**
+             *  remove all active classes and add active-classes to clicked
+             *
+             *  @param  {object} event
+             *  @param  {object} index
+             *
+             */
+            handleClick(event, index) {
+                for (let i = 0; i < this.state.wrapper.children.length; i++) {
+                    this.state.wrapper.children[i].classList.remove('tiny-accordion__item--active')
+
+                    if (i === index) {
+                        this.state.wrapper.children[i].classList.add('tiny-accordion__item--active')
+                        this.state.index = i
+                    }
+                }
+
+                this.update()
+            },
+
+            /**
+             *  getting class for active accordion in header 
+             *
+             */
+            getCurrentClass(index)
+            {
+                let classes = []
+
+                if (index === this.state.index) {
+                    classes.push('active')
+                }
+
+                return classes.join(' ')
+            }
+        }
+
+    </script>
+</tiny-accordion>
